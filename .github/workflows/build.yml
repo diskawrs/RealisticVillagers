@@ -15,10 +15,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK 19
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '19'
+          java-version: '21'
           distribution: 'temurin'
           cache: maven
 
@@ -35,8 +35,19 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
+      - name: Check JAR exists
+        id: check_jar
+        run: |
+          JAR=$(find dist/target -name "*.jar" ! -name "*-sources.jar" | head -n 1)
+          if [ -z "$JAR" ]; then
+            echo "No JAR found, build may have failed silently."
+            exit 1
+          fi
+          echo "jar_path=$JAR" >> $GITHUB_OUTPUT
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: RealisticVillagers-1.21.11
-          path: dist/target/*.jar
+          path: ${{ steps.check_jar.outputs.jar_path }}
+          if-no-files-found: error

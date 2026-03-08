@@ -22,36 +22,6 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Trigger JitPack build for packetevents
-        run: |
-          echo "Triggering JitPack to build packetevents SNAPSHOT..."
-          curl -s "https://jitpack.io/com/github/retrooper/packetevents/2.9.5-SNAPSHOT/build.log" > /dev/null || true
-          echo "Waiting for JitPack to finish building..."
-          for i in {1..10}; do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "https://jitpack.io/com/github/retrooper/packetevents/2.9.5-SNAPSHOT/packetevents-2.9.5-SNAPSHOT.pom")
-            echo "Attempt $i: HTTP $STATUS"
-            if [ "$STATUS" = "200" ]; then
-              echo "JitPack artifact is ready!"
-              break
-            fi
-            sleep 15
-          done
-
-      - name: Configure Maven settings for JitPack
-        run: |
-          mkdir -p ~/.m2
-          cat > ~/.m2/settings.xml << EOF
-          <settings>
-            <servers>
-              <server>
-                <id>jitpack.io</id>
-                <username>${{ github.actor }}</username>
-                <password>${{ secrets.GITHUB_TOKEN }}</password>
-              </server>
-            </servers>
-          </settings>
-          EOF
-
       - name: Download BuildTools
         run: |
           mkdir -p buildtools

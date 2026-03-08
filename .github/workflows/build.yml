@@ -38,7 +38,7 @@ jobs:
       - name: Check JAR exists
         id: check_jar
         run: |
-          JAR=$(find dist/target -name "*.jar" ! -name "*-sources.jar" | head -n 1)
+          JAR=$(find target -name "RealisticVillagers-*.jar" ! -name "*-sources.jar" | head -n 1)
           if [ -z "$JAR" ]; then
             echo "No JAR found, build may have failed silently."
             exit 1

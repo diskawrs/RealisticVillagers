@@ -288,11 +288,13 @@ public final class RealisticVillagers extends JavaPlugin {
 
         logger.info("Recipes created!");
         logger.info("");
-        logger.info("Loading entity data from all worlds...");
+        logger.info("Loading entity data from all worlds (async)...");
 
-        converter.loadData();
-
-        logger.info("Data loaded!");
+        getServer().getScheduler().runTaskAsynchronously(this, () -> {
+                converter.loadData();
+                getLogger().info("Data loaded!");
+        });
+        
         logger.info("");
         logger.info("Loading loots from the configuration files...");
 
